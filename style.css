@@ -1,0 +1,157 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background-color: #f4f5f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.05em;
+
+}
+
+.menu{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    background-color: #fff;
+    padding: 2em 1em;
+    box-shadow: 0 0 2em rgba(0,0,0,0.1);
+}
+
+.menu li a{
+    text-decoration : none;
+    list-style: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    padding: 0 2em;
+    transition: .5s;
+}
+.menu li{
+    list-style: none;
+
+}
+.menu li a:hover{
+    color: #2a56ce;
+
+}
+
+section{
+    margin-top: 15em;
+    background-color: #fff;
+    padding: 6em;
+    display : flex;
+    flex-direction: column;
+    border-radius: 0.6em;
+    box-shadow: 0 0 2em rgba(0,0,0,0.1);
+    
+}
+
+.style_btn{
+    padding: 1em 2em;
+    color: #fff;
+    background-color: #2a56ce;
+    letter-spacing: 1px;
+    border: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.error{
+    color: red;
+}
+
+.pseudo form{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.pseudo form input{
+    outline: 0;
+    border: 0;
+    border-bottom: 1px solid #999;
+    padding: 0.5em 0;
+    margin: 2em;
+    width: 35em;
+    padding: auto;
+
+}
+
+.qcm, .questionnaire{
+    width: 50%;
+}
+
+.question {
+    margin: 1em 0;
+
+}
+.qcm form .style_btn{
+    padding: 1em 2em;
+    margin-top: 2.5em;
+    margin-left: -2em;
+}
+
+.resultat h1{
+    margin-bottom: 2em;
+    text-transform: uppercase;
+}
+
+.question_error{
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+.reponse_vrai{
+    font-style: italic;
+    color : green;
+    font-weight: bold;
+}
+
+.note{
+    font-weight: 500;
+    margin-top: 2em;
+}
+
+.color{
+    color: #999
+}
+
+.questionnaire form .style_btn{
+    margin-top: 2.5em;
+}
+
+.questionnaire {
+    padding: 3em;
+}
+
+.change_color{
+    color: #2a56ce;
+}
+
+.question_error{
+    font-weight: bold;
+    font-style: italic;
+    color: red;
+}
+
+.reponse_vrai{
+    font-style: italic;
+    color : green;
+    font-weight: bold;
+}
+
+.correction{
+    padding: 0.25em;    
+}
+
+.correction p {
+    padding: 0.15em;    
+}

@@ -6,6 +6,10 @@ SELECT * FROM QUESTION;
 
 SELECT * FROM REPONSE;
 
+--tous selectionner
+
+SELECT * FROM QUESTIONNAIRE natural join  QUESTION natural join REPONSE;
+
 -- choisire le questionnaire 1 et afficher les questions
 
 SELECT * FROM QUESTION WHERE QUESTIONNAIRE_ID = 1;
