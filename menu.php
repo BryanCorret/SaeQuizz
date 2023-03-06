@@ -1,6 +1,7 @@
    <!-- Header -->
    <ul class="menu">
-        <li><a href="index.php">Home</a></li>
-        <li><a href="quizz.php">Quizz</a></li>
-        <li><a href="qcm.php">Changer de quizz</a></li>
+        <li><a href="home.php">Home</a></li>
+        <li><a href="infoCompte.php">Info du compte</a></li>
+        <li><a href="deconnexion.php">Déconnexion</a></li>
+        
     </ul>

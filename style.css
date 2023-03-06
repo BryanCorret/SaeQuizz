@@ -44,7 +44,7 @@ body{
 }
 
 section{
-    margin-top: 15em;
+    margin-top: 7.5em;
     background-color: #fff;
     padding: 6em;
     display : flex;
@@ -63,8 +63,20 @@ section{
     cursor: pointer;
     text-transform: uppercase;
 }
+
+.style_btn_red{
+    padding: 1em 2em;
+    color: #fff;
+    background-color: #ce2a2a;
+    letter-spacing: 1px;
+    border: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
 .error{
     color: red;
+    margin: 1em;
 }
 
 .pseudo form{
@@ -78,8 +90,8 @@ section{
     border: 0;
     border-bottom: 1px solid #999;
     padding: 0.5em 0;
-    margin: 2em;
-    width: 35em;
+    margin: 1em;
+    width: 100%;
     padding: auto;
 
 }
@@ -129,7 +141,8 @@ section{
 }
 
 .questionnaire {
-    padding: 3em;
+    padding: 1.5em;
+    margin-top: 2em;
 }
 
 .change_color{
@@ -154,4 +167,41 @@ section{
 
 .correction p {
     padding: 0.15em;    
+}
+
+.inscritpion{
+    margin-top: 5em;
+}
+.inscritpion form{
+    display: flex;
+    flex-direction: column;
+}
+
+.inscritpion form input{
+    outline: 0;
+    border: 0;
+    border-bottom: 1px solid #999;
+    padding: 0.5em 0;
+    margin: 2em;
+    width: 100%;
+    padding: auto;
+}
+.lien{
+    text-align: center;
+    margin-top: 2em;
+    text-decoration: none;
+}
+
+.title{
+    text-align: left;
+    margin-top: 8em;
+}
+.home{
+    display: block;
+    justify-content: left;
+}
+.sucess{
+    color: #1a9b2c;
+    font-weight: bold;
+    margin: 1em;
 }

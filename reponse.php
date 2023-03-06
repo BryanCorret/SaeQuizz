@@ -7,7 +7,18 @@ if(!isset($_SESSION['pseudo'])){
 // Connexion à la base de données
 include('connect.php');
 include('menu.php');
+$bdd=connectdb();
 
+$idquestionnaire = $_SESSION['id'];
+
+$nbReponseVrai = 0;
+$nbQuestion = $bdd->prepare('SELECT COUNT(*) FROM QUESTION WHERE QUESTIONNAIRE_ID = ?');
+$nbQuestion->execute(array($idquestionnaire));
+$nbQuestion = $nbQuestion->fetch();
+$nbQuestion = $nbQuestion[0];
+
+$reqQuestion = $bdd->prepare('SELECT * FROM QUESTION WHERE QUESTIONNAIRE_ID = ?');
+$reqQuestion->execute(array($idquestionnaire));
 
 ?>
 
@@ -23,30 +34,32 @@ include('menu.php');
 </head>
 <body>
     <section class="resultat">
-        <h1> Résultat du QCM de <span class = "blue"><?php echo $_SESSION['pseudo']  ?></span></h1>
+        <h1> Résultat du QCM de <span class = "change_color"><?php echo $_SESSION['pseudo']  ?></span></h1>
+        <p class="color">Voici la correction :</p>
+        
         <?php 
             foreach($_POST as $idQuestion =>$idReponse){
 
-                $req = $bdd->prepare('SELECT * FROM QUESTION WHERE id = ?');
-                $req->execute(array($idQuestion));
-                $question = $req->fetch();
-            
-                $req = $bdd->prepare('SELECT * FROM REPONSE WHERE id = ?');
-                $req->execute(array($idReponse));
-                $reponse = $req->fetch();
+                $question = $reqQuestion->fetch();
+              
+                $reqReponse = $bdd->prepare('SELECT * FROM REPONSE WHERE id = ?');
+                $reqReponse->execute(array($idReponse));
+                $reponse = $reqReponse->fetch();
 
                 // on verifie si la reponse est correcte
+                
 
 
-                if(isset($reponse['CORRECT']) && $reponse['CORRECT']){
+                if(isset($reponse['CORRECT']) && isset($question['QUESTION']) && $reponse['CORRECT']){
                     echo '<div class="correction">';
                         echo '<p class="question_vrai">'.$question['QUESTION'].'</p>';
-                        echo '<p class="color"> La bonne reponse etait </p>';
+                        echo '<p class="color"> Vous avez répondu correctement </p>';
                         echo '<p class="reponse_vrai">'.$reponse['REP'].'</p>';    
                     echo '</div>';                   
+                    $nbReponseVrai++;
 
                 }else{
-                    if(isset($question['QUESTION'])) {
+                    if(isset($question['QUESTION']) && isset($reponse['CORRECT'])) {
                         echo '<div class="correction">';
                             echo '<p class="question_error">'.$question['QUESTION'].'</p>';
                             echo '<p class="color"> Vous aviez répondu </p>';
@@ -57,10 +70,16 @@ include('menu.php');
                             $reponse = $req->fetch();
                             echo '<p class="reponse_vrai">'.$reponse['REP'].'</p>';
                         echo '</div>';
-                                      }
-            }
+                    }
+                }
 
             }
+            echo '<p class="note">Votre note est de : '.$nbReponseVrai.'/'.$nbQuestion.'</p>';
+            // on enregistre la note dans la base de données
+            $req = $bdd->prepare('INSERT INTO NOTE_USER (NOTE, QUESTIONNAIRE_ID, USER_ID) VALUES (?, ?, ?)');
+            $req->execute(array($nbReponseVrai, $idquestionnaire, $_SESSION['user']));
+            
+
         ?>
     </section>
 

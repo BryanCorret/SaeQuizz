@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <?php
 include("connect.php");
+$bdd=connectdb();
+
 // recuperer le post
 $idQuestionnaire = $_GET['id'];
 
@@ -39,4 +41,4 @@ foreach ($questionnaires as $questionnaire) {
         <?php } ?>
 
 </body>
-</html>
+</html>                             

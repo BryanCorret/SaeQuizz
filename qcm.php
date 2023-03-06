@@ -11,21 +11,23 @@ if(!isset($_SESSION['id'])){
 }
 $idquestionnaire = $_SESSION['id'];
 
-// connexion à la base de données
-include('connect.php');
 
-// si le formulaire est envoyé
-if(isset($_POST['submit'])){
-    
-}
+
+include('class/Reponse.php');
+include('class/Questions.php');
+include('connect.php');
+$bdd = connectdb();
+// une requete pour récupérer les questions et les réponses
+
+// on instancie les objets
+$question = new Question($bdd);
+$reponse = new Reponse($bdd);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 
     <title>QCM</title>
@@ -36,30 +38,33 @@ if(isset($_POST['submit'])){
     <h2> </h2>
     <form action="reponse.php" method="POST">
 
-        <?php
-        $req = $bdd->prepare('SELECT * FROM QUESTION WHERE QUESTIONNAIRE_ID = ?');
-        $req->execute(array($idquestionnaire));
-        $questions = $req->fetchAll();
-        $req->closeCursor();
-        ?>
-        
+    <?php
+    // Récupération des questions du questionnaire
+    $questions = $question->getByQuestionnaireId($idquestionnaire);
+?>
 
-        <ul>
-            <?php foreach($questions as $question): ?>
-            <h3 class="question"><li><?= $question['QUESTION'] ?></li></h3>
-            <?php
-            $req = $bdd->prepare('SELECT * FROM REPONSE WHERE QUESTION_ID = ?');
-            $req->execute(array($question['ID']));
-            $reponses = $req->fetchAll();
-            $req->closeCursor();
-            ?>
-            <ul class="choix">
-                <?php foreach($reponses as $reponse): ?>
-                <li><input type="radio" name="<?= $question['ID']?>" value="<?= $reponse['ID'] ?>"><?= $reponse['REP'] ?></li>
-                <?php endforeach; ?>
-            </ul>
+<ul>
+    <?php foreach($questions as $quest): ?>
+        <!-- print dans la console $quest-->
+        
+        <h3 class="question"><li><?= $quest["QUESTION"] ?></li></h3>
+        <?php
+            // Récupération des réponses pour la question courante
+            $reponses = $reponse->getByQuestionId($quest["ID"]);
+        ?>
+        <script>console.log(<?= json_encode($reponse) ?>)</script>
+
+        <ul class="choix">
+            <?php foreach($reponses as $reponse): ?>
+                <li><input type="radio" name="<?= $quest["ID"] ?>" value="<?= $reponse["ID"] ?>"><?= $reponse["REP"] ?></li>
             <?php endforeach; ?>
         </ul>
+
+    <?php
+    $reponse = new Reponse($bdd); // sinon crash
+ endforeach; ?>
+</ul>
+
         <button type="submit" name="submit" class="style_btn">Prochaine question</button>
 
     </form>

@@ -1,50 +1,42 @@
-
 <?php
-    session_start();
-    // regex sur le pseudo pour bloquer les caractere '-"/\[]{}()_'
-    $regex = '/[-"\/\[\]{}\(\)_]/';
+session_start();
 
-    if(isset($_POST['button'])){
-       // verifier que le champ n'est pas vide et que le pseudo ne contient pas de caractere speciaux du regex
-         if(!empty($_POST['pseudo']) && !(preg_match($regex, $_POST['pseudo']))){
-            // on stock le pseudo dans une variable de session
-            $_SESSION['pseudo'] = $_POST['pseudo'];
-            // redirection vers la page quizz.php
-            header('Location: home.php');         
-    }
-    else{
-        // afficher un message d'erreur
-        $error = "Veuillez entrez un pseudo correct !";
-    }
+if (isset($_GET['login_err'])) {
+    $error = "Erreur email ou mot de passe incorrect";
 }
 ?>
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <title>Quizz</title>
 </head>
-<body>
-    <?php include('menu.php');?>
-    
-    
-    
-    <section class="pseudo">
-    <form action="./index.php" method="POST">
 
-        <p class="error">
-            <?php
-                if(isset($error)){
+<body>
+    <?php include('menu.php'); ?>
+    <section class="pseudo">
+
+        <form action="connexion.php" method="post">
+            <h2>Connexion</h2>
+            <p class="error">
+                <?php if (isset($error)) {
                     echo $error;
                 }
-            ?>
-        <p> Entrez votre pseudo :</p>
-        <input type="text" name="pseudo" placeholder="Votre pseudo">
-        <button type="submit" name="button" class="style_btn">Valider</button>
-    </form>
-</section>
-    
+                ?> </p>
+            <p> Entrez votre mail :</p>
+            <input type="email" name="mail" placeholder="Email" required="required">
+            <p> Entrez votre mot de passe :</p>
+
+            <input type="password" name="mdp" placeholder="Mot de passe" required="required">
+            <button type="submit" class="style_btn">Connexion</button>
+        </form>
+        <p class="lien"> <a href="inscription.php" class="lien">Inscription</a></p>
+        </form>
+    </section>
+
 </body>
+
 </html>
