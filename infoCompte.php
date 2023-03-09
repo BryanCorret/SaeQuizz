@@ -70,7 +70,6 @@
             <form action="modification_compte.php" method="post">
             <h3>Bonjour <span class="change_color"> <?php echo $_SESSION['pseudo']; ?> </span> bienvenue dans votre espace privée</h3>
                  <!--afficher dans la console en php le $_SESSION  -->
-                <?php print_r($_SESSION); ?>
                 <input type="text" name="pseudo" placeholder="Pseudo" required="required" value="<?php echo $_SESSION['pseudo']; ?>">
                 <input type="email" name="email" placeholder="Email" required="required" value="<?php echo $_SESSION['mail']; ?>">
                 <input type="password" name="password" placeholder="Mot de passe" required="required" value ="<?php echo $_SESSION['MDP']; ?>">

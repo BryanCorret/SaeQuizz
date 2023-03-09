@@ -33,6 +33,14 @@ class Questionnaire {
     }
     
     public function delete($id) {
+        // on supprime les questions associées au questionnaire	
+        require_once("class/Questions.php");
+        $question = new Question($this->bdd);
+        $questions = $question->getByQuestionnaireId($id);
+        foreach ($questions as $q) {
+            $question->delete($q['ID']);
+        }
+
         $stmt = $this->bdd->prepare("DELETE FROM QUESTIONNAIRE WHERE ID=:id");
         $stmt->bindParam(":id", $id);
         $stmt->execute();
@@ -80,33 +88,18 @@ class Questionnaire {
         if (!$data) {
             throw new Exception("Erreur lors du décodage JSON.");
         }
-        if (!isset($data['titre'])) {
-            throw new Exception("Le nom du questionnaire est manquant.");
-        }
-        ;
-        $req = $this->bdd->prepare("INSERT INTO QUESTIONNAIRE (NOM_QUESTIONAIRE) VALUES (:titre)");
-        $req->bindParam(":titre", $data['titre']);
-        $req->execute();
-        $id = $this->bdd->lastInsertId();
-
+    
         if (!isset($data['questions']) || !is_array($data['questions'])) {
             throw new Exception("Le tableau de questions est manquant ou invalide.");
-        }
-        foreach ($data['questions'] as $questionData) {
+        }else{
+            $req = $this->add($data['titre']);
+            foreach ($data['questions'] as $questionData) {
+                
             $question = new Question($this->bdd);
             $question->importJson(json_encode($questionData));            
         }
-        // si l'import de questionnaire à planté , on le supprime ou si il n'a pas de questions
-        $req = $this->bdd->prepare("SELECT COUNT(*) FROM QUESTION WHERE QUESTIONNAIRE_ID=:id");
-        $req->bindParam(":id", $id);
-        $req->execute();
-        $count = $req->fetchColumn();
-        if ($count == 0) {// si le questionnaire n'a pas de questions, on le supprime
-            $req = $this->bdd->prepare("DELETE FROM QUESTIONNAIRE WHERE ID=:id");
-            $req->bindParam(":id", $id);
-            $req->execute();
-            throw new Exception("Le questionnaire ne contient aucune question.");
-        }
+    }
+      
     }
     
 }

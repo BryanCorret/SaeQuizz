@@ -1,6 +1,8 @@
 <?php 
     session_start();
     require_once 'connect.php'; // On inclu la connexion à la bdd
+    include('class/User.php'); // On inclu la classe User
+
     $bdd=connectdb();
 
     // Si les variables existent et qu'elles ne sont pas vides
@@ -9,6 +11,9 @@
         $email = ($_POST['email']);
         $password = ($_POST['password']);
         $password_retype = ($_POST['password_retype']);
+        // on créee un objet de la classe User
+        $user = new User($bdd);
+
 
         // on vérifie si le pseudo est conforme à la regex
         if(preg_match('/^[a-zA-Z0-9_]+$/', $pseudo)){
@@ -19,14 +24,8 @@
                     // on vérifie si les deux mots de passe sont identiques
                     if($password == $password_retype ){
                         // On uptate dans la base de données
-                            $update = $bdd->prepare("UPDATE USER SET PSEUDO=:PSEUDO, MAIL=:MAIL, MDP=:MDP, TYPEDECOMPTE=:TYPEDECOMPTE WHERE ID=:ID");
-                            $update->execute(array(
-                                'PSEUDO' => $pseudo,
-                                'MAIL' => $email,
-                                'MDP' => $password,
-                                'TYPEDECOMPTE' => 'USER',
-                                'ID' => $_SESSION['user']
-                            ));
+                        $user->update($_SESSION['user'], $pseudo, $email, $password, 'USER');
+                  
                             // on met à jour les variables de session
                             $_SESSION['pseudo'] = $pseudo;
                             $_SESSION['email'] = $email;

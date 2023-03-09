@@ -1,12 +1,12 @@
-<?php 
+<?php
 session_start();
 
-if(!isset($_SESSION['pseudo'])){
+if (!isset($_SESSION['pseudo'])) {
     header('Location: index.php');
 }
 
 // si l'id du questionnaire n'existe pas on redirige vers la page home.php
-if(!isset($_SESSION['id'])){
+if (!isset($_SESSION['id'])) {
     header('Location: home.php');
 }
 $idquestionnaire = $_SESSION['id'];
@@ -26,48 +26,68 @@ $reponse = new Reponse($bdd);
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
 
     <title>QCM</title>
 </head>
+
 <body>
     <section class="qcm">
-    <h1>QCM</h1>
-    <h2> </h2>
-    <form action="reponse.php" method="POST">
+        <?php include('menu.php'); ?>
+        <h1>QCM</h1>
+        <form action="reponse.php" method="POST">
 
-    <?php
-    // Récupération des questions du questionnaire
-    $questions = $question->getByQuestionnaireId($idquestionnaire);
-?>
+            <?php
+            // Récupération des questions du questionnaire
+            $questions = $question->getByQuestionnaireId($idquestionnaire);
+            ?>
+            <ul class= "repquestion">
+                <?php foreach ($questions as $quest):
+                     $reponses = $reponse->getByQuestionId($quest["ID"]);
+                ?>
+                    <h3 class="question">
+                        <li>
+                            <?= $quest["QUESTION"] ?>
+                        </li>
+                    </h3>
 
-<ul>
-    <?php foreach($questions as $quest): ?>
-        <!-- print dans la console $quest-->
-        
-        <h3 class="question"><li><?= $quest["QUESTION"] ?></li></h3>
-        <?php
-            // Récupération des réponses pour la question courante
-            $reponses = $reponse->getByQuestionId($quest["ID"]);
-        ?>
-        <script>console.log(<?= json_encode($reponse) ?>)</script>
+                        <ul class="choix">
+                            <!-- on verifie le type de question -->
+                            <?php
+                            if ($quest["TYPE_QUESTION"] == "checkbox") {?>
+                            <p>Cochez toutes les bonnes réponses</p>
+                               <?php foreach ($reponses as $reponse): ?>
+                                    <li><input type="checkbox" name="<?= $quest["ID"] ?>[]" value="<?= $reponse["ID"] ?>"><?= $reponse["REP"] ?></li>
+                               <?php endforeach;
+                               }  elseif ($quest["TYPE_QUESTION"] == "radio") { ?>
+                                <p>Cochez la bonne réponse</p>
+                                <?php foreach ($reponses as $reponse):?>
+                                    <li><input type="radio" name="<?= $quest["ID"] ?>" value="<?= $reponse["ID"] ?>"><?= $reponse["REP"] ?></li>
+                                <?php endforeach;
+                             
+                            } elseif ($quest["TYPE_QUESTION"] == "select") {?>
+                                <p>Choisissez la bonne réponse</p>
+                                <select name="<?= $quest["ID"] ?>">
+                                <?php foreach ($reponses as $reponse):?>
+                                    <option value="<?= $reponse["ID"] ?>"><?= $reponse["REP"] ?></option>
+                                <?php endforeach;
+                                echo '</select>';
+                            }
+                            ?>
+                        </ul>
 
-        <ul class="choix">
-            <?php foreach($reponses as $reponse): ?>
-                <li><input type="radio" name="<?= $quest["ID"] ?>" value="<?= $reponse["ID"] ?>"><?= $reponse["REP"] ?></li>
-            <?php endforeach; ?>
-        </ul>
+                    <?php
+                    $reponse = new Reponse($bdd); // sinon crash
+                endforeach; ?>
+            </ul>
 
-    <?php
-    $reponse = new Reponse($bdd); // sinon crash
- endforeach; ?>
-</ul>
+            <button type="submit" name="submit" class="style_btn">Prochaine question</button>
 
-        <button type="submit" name="submit" class="style_btn">Prochaine question</button>
-
-    </form>
+        </form>
     </section>
 </body>
+
 </html>

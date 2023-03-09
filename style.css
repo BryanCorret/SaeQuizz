@@ -205,3 +205,10 @@ section{
     font-weight: bold;
     margin: 1em;
 }
+.repquestion{
+    list-style: none;
+}
+
+.reponse_faux{
+    color: red;
+}

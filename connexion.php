@@ -1,24 +1,22 @@
 <?php 
     session_start(); 
     require_once 'connect.php'; // On inclut la connexion à la base de données
+    include('class/User.php'); // On inclut la classe User
     $bdd=connectdb();
 
     if(isset($_POST['mail']) && isset($_POST['mdp'])){ // Si il existe les champs email, mdp et qu'il sont pas vident       
         $email = ($_POST['mail']); 
         $mdp = ($_POST['mdp']);
        
-        $check = $bdd->prepare('SELECT ID,PSEUDO, MAIL, MDP, TYPEDECOMPTE FROM USER WHERE MAIL = ?');
-        $check->execute(array($email));
-        $data = $check->fetch();
-        $row = $check->rowCount();
-        // afficher dans la console l'email et le mot de passe
-        echo $email;
-        echo $mdp;
 
+        // On créee un objet de la classe User
+        $user = new User($bdd);
 
+        $data = $user->selectByMail($email); // On récupère les données de l'utilisateur (id, pseudo, mail, mdp, type de compte)
+        $row = $user->check($email); // On vérifie si l'utilisateur existe
 
         // Si > à 0 alors l'utilisateur existe
-        if($row > 0){
+        if(!($row)){
             // Si le mail est bon niveau format
             if(filter_var($email, FILTER_VALIDATE_EMAIL)){
                 // Si le mot de passe est le bon
@@ -30,7 +28,7 @@
                     $_SESSION['MDP'] = $data['MDP'];
 
 
-                    if($data['TYPEDECOMPTE'] == 'USER'){
+                    if($data['TYPEDECOMPTE'] == 'ADMIN'){
                         $_SESSION['admin'] = 1;
                     }
                     header('Location: home.php');

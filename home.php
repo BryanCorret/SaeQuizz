@@ -43,7 +43,7 @@ if (isset($_POST['import'])) {
     $questionnaire = new Questionnaire($bdd);
 
     // print file en javascript
-    echo '<script>console.log(' . json_encode($file) . ')</script>';
+    //echo '<script>console.log(' . json_encode($file) . ')</script>';
     // Importer le questionnaire
     
     $questionnaire->importJSON($file);
@@ -60,10 +60,19 @@ if (isset($_POST['delete'])) {
     // Créer un objet Questionnaire avec la connexion à la base de données
     $questionnaire = new Questionnaire($bdd);
 
+    // on regarde si l'utilisateur à repondu à ce questionnaire
+    $req = $bdd->query('SELECT * FROM NOTE_USER WHERE QUESTIONNAIRE_ID=' . $id . ' AND USER_ID=' . $_SESSION['user']);
+    $result = $req->fetch();
+    // si il a repondu on supprime sa note
+    if ($result) {
+        $bdd->query('DELETE FROM NOTE_USER WHERE QUESTIONNAIRE_ID=' . $id . ' AND USER_ID=' . $_SESSION['user']);
+    }
+
+    
     // Supprimer le questionnaire
     $questionnaire->delete($id);
 
-    // Rediriger vers la page d'accueil
+    // renvoyer vers la page d'accueil sans formulaire en post
     header('Location: home.php');
     exit;
 }
@@ -79,9 +88,6 @@ if (isset($_POST['recommencer'])){
     header('Location:  qcm.php');
 
 }
-
-
-
 
 $Listquestionnaires = $bdd->query('SELECT * FROM QUESTIONNAIRE')->fetchAll(PDO::FETCH_ASSOC); // Recup les qestionnaires sous forme de dico (Array ( [0] => Array ( [ID] => 1 [NOM_QUESTIONAIRE] => Questionnaire 1 ) )
 $QuestionnaireFait = $bdd->query('SELECT QUESTIONNAIRE_ID, NOTE FROM NOTE_USER WHERE USER_ID=' . $_SESSION['user'])->fetchAll(PDO::FETCH_ASSOC); // Recup les questionnaires fait par l'utilisateur sous forme de dico (Array ( [0] => Array ( [QUESTIONNAIRE_ID] => 1 [NOTE] => 0 ) ) )
@@ -119,30 +125,29 @@ $QuestionnaireFait = $bdd->query('SELECT QUESTIONNAIRE_ID, NOTE FROM NOTE_USER W
                     
                            
 
-                        <button  type="submit"name="export" class="style_btn">Exporter en JSON</button>
                         <?php if (isset($_SESSION['admin']) && $_SESSION['admin'] == 1) {?>
+                            <button  type="submit"name="export" class="style_btn">Exporter en JSON</button>
                             <button type="submit" name="delete" class="style_btn_red">Supprimer</button>
                         <?php } ?>
-         
-                            
-            
                     </ul>
                 </form>
             </section>
         </div>
     <?php } ?>
-    <div>
-        <?php 
+    <?php 
             // si l'utilisateur est un admin on affiche le bouton pour ajouter un questionnaire
             // on verifie si la variable de session admin existe et si elle est égale à 1
-            if (isset($_SESSION['admin']) && $_SESSION['admin'] == 1) {
-                echo '<form method="post" enctype="multipart/form-data" action="home.php">';
-                echo '<input type="file" name="file">';
-                echo '<button type="submit" name="import">Importer</button>';
-                echo '</form>';
-            }
+            if (isset($_SESSION['admin']) && $_SESSION['admin'] == 1) {?>
+                <section class="questionnaire">
+
+                    <form method="post" enctype="multipart/form-data" action="home.php">
+                        <label for="file">Importer un questionnaire</label>
+                        <input type="file" name="file" class="">
+                        <button type="submit" name="import" class="style_btn">Importer</button>
+                    </form>
+                </section>
+            <?php }
         ?>
-    </div>
 </body>
 
 </html>

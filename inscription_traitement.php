@@ -1,5 +1,6 @@
 <?php 
     require_once 'connect.php'; // On inclu la connexion à la bdd
+    include('class/User.php'); // On inclu la classe User
     $bdd=connectdb();
 
     // Si les variables existent et qu'elles ne sont pas vides
@@ -8,17 +9,16 @@
         $email = ($_POST['email']);
         $password = ($_POST['password']);
         $password_retype = ($_POST['password_retype']);
+        // on créee un objet de la classe User
+        $user = new User($bdd);
 
         // On vérifie si l'utilisateur existe
-        $check = $bdd->prepare('SELECT PSEUDO, MAIL, MDP FROM USER WHERE MAIL = ?');
-        $check->execute(array($email));
-        $data = $check->fetch();
-        $row = $check->rowCount();
+        $row = $user->check($email);
 
         $email = strtolower($email); // on transforme toute les lettres majuscule en minuscule 
         
         // Si la requete renvoie un 0 alors l'utilisateur n'existe pas 
-        if($row == 0){ 
+        if($row){ 
             if(strlen($pseudo) <= 100){ // On verifie que la longueur du pseudo <= 100
                 // on vérifie si le mot de passe est conforme à la regex
                 if(preg_match('/^(?=.*[^\w\s])(?=.{9,}$).+$/', $password) ){
@@ -28,13 +28,8 @@
                                         
                             
                             // On insère dans la base de données
-                            $insert = $bdd->prepare('INSERT INTO USER(PSEUDO, MAIL, MDP, TYPEDECOMPTE) VALUES(:PSEUDO, :MAIL, :MDP, :TYPEDECOMPTE)');
-                            $insert->execute(array(
-                                'PSEUDO' => $pseudo,
-                                'MAIL' => $email,
-                                'MDP' => $password,
-                                'TYPEDECOMPTE' => 'USER'
-                            ));
+                            $user->insert($pseudo, $email, $password, 'USER');
+                          
                             // On redirige avec le message de succès
                             header('Location:inscription.php?reg_err=success');
                             
